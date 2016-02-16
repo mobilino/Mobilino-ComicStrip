@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Comic Strips</title>
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta charset="utf-8">
+<link href="css/comicStrip.css" rel="stylesheet" type="text/css" />
+<script src="lib/jquery-2.1.4.min.js"></script>
+<script>
+	window.onerror = function(msg, url, linenumber) {
+		alert('Error message: ' + msg + '\nURL: ' + url + '\nLine Number: '
+				+ linenumber);
+		return true;
+	}
+</script>
+<script src="lib/startswith.js"></script>
+<script src="js/comicStrip.js"></script>
+</head>
+<body>
+	<div id="menuButton"> 
+        <div></div><br />
+        <div></div><br />
+        <div></div><br />
+    </div>
+	<div id="younger"></div>
+	<div id="currentDesc">&nbsp;</div>
+	<div id="current"></div>
+	<div id="older"></div>
+	<div id="menu" class="hide"><select id="provider">
+					<option value="-1">please select</option>
+				   </select>
+				   <button id="menuOk">ok</button>
+    </div>
+</body>
+</html>
