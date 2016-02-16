@@ -269,6 +269,7 @@ window.comicStrip = (function($) {
 	function onDeviceReady() {
 		if (window.StatusBar) {
 			StatusBar.overlaysWebView(false);
+			alert("hidden");
 		}
 		screenWidth = $(CURRENT_DIV).width();
 		screenHeight = $(window).height();
