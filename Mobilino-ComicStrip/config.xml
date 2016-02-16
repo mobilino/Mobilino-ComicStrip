@@ -41,12 +41,35 @@ Christof Lange
     <icon src="img/icon_96.png" gap:platform="android" gap:qualifier="xhdpi" /> <!--2-->
     <icon src="img/icon_144.png" gap:platform="android" gap:qualifier="xxhdpi" /> <!--3-->
     <icon src="img/icon_192.png" gap:platform="android" gap:qualifier="xxxhdpi" /> <!--4-->
+
+<gap:splash src="img/splash_480.png" />
+<gap:splash src="img/splash_480.png"  gap:platform="ios" width="320" height="480" />
+<gap:splash src="img/splash_960.png"  gap:platform="ios" width="640" height="960" />
+<gap:splash src="img/splash_1136.png" gap:platform="ios" width="640" height="1136" />
+<gap:splash src="img/splash_768.png"  gap:platform="ios" width="1024" height="768" />
+<gap:splash src="img/splash_1024.png" gap:platform="ios" width="768" height="1024" />
+<gap:splash src="img/splash_2048.png" gap:platform="ios" width="1536" height="2048" />
+<gap:splash src="img/splash_1536.png" gap:platform="ios" width="2048" height="1536" />
+<!-- iPhone 6 -->
+<gap:splash src="img/splash_1334.png" gap:platform="ios" width="750" height="1334" />
+<gap:splash src="img/splash_2208.png" gap:platform="ios" width="1242" height="2208" />
+<!-- Splash for Android -->
+<gap:splash src="img/splash_150.9.png" gap:platform="android" />
+<gap:splash src="img/splash_150.9.png" gap:platform="android" gap:qualifier="ldpi" />
+<gap:splash src="img/splash_150.9.png" gap:platform="android" gap:qualifier="mdpi" />
+<gap:splash src="img/splash_150.9.png" gap:platform="android" gap:qualifier="hdpi" />
+<gap:splash src="img/splash_300.9.png" gap:platform="android" gap:qualifier="xhdpi" />
+<gap:splash src="img/splash_600.9.png" gap:platform="android" gap:qualifier="xxhdpi" />
+<gap:splash src="img/splash_600.9.png" gap:platform="android" gap:qualifier="xxxhdpi" />
     
 <gap:platform name="ios" />
 
 <feature name="http://api.phonegap.com/1.0/network"/>
 <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
 <access origin="*" />
+
+<gap:plugin name="cordova-plugin-statusbar" source="npm"/>
+<preference name="StatusBarOverlaysWebView" value="true" />
 
 <preference name="orientation" value="portrait" />
 

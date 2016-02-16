@@ -3,6 +3,8 @@ window.comicStrip = (function($) {
 	'use strict';
 	var touchStartX = 0;
 	var touchStartY = 0;
+    var bodyTouchStartX = 0;
+    var bodyTouchStartY = 0;
 	var currentDeltaX = 0;
 	var currentDeltaY = 0;
 	var screenWidth = 0;
@@ -44,9 +46,12 @@ window.comicStrip = (function($) {
 		if (imgDataArray[imgDataIndex].height > (screenHeight / 100 * 69)) {
 			var tmpDeltaY = applyBoundaries(y - touchStartY, -(imgDataArray[imgDataIndex].height - (screenHeight / 100 * 69) + 2));
 			if (tmpDeltaY !== currentDeltaY) {
+			    bodyTouchStartY = 0; //disable swipe detection on body.
 				currentDeltaY = tmpDeltaY;
 				$("#current img").css("top", currentDeltaY);
-			}
+			  } else if (bodyTouchStartX !== 0 && bodyTouchStartY === 0) {
+			    bodyTouchStartY = y; //enable swipe detection on body again.
+			  }
 		}
 	}
 
@@ -61,6 +66,25 @@ window.comicStrip = (function($) {
 		currentDeltaY = 0;
 	}
 
+	// --------------- swipe to next strip -----------------------
+	function onBodyTouchStart(x, y) {
+		bodyTouchStartX = x;
+		bodyTouchStartY = y;
+	    }
+
+	    function onBodyTouchEnd(x, y) {
+		if (bodyTouchStartY !== 0) {
+		  var distanceX = bodyTouchStartX - x;
+		  var distanceY = bodyTouchStartY - y;
+		  if (Math.abs(distanceY) > Math.abs(distanceX) && Math.abs(distanceY) > 60) {
+		    if (distanceY > 0) {
+		      scrollUp();
+		    } else {
+		      scrollDown();
+		    }
+		  }
+		}
+	    }
 	// --------------- load and display a strip -----------------------
 	function refreshCurrentDesc() {
 		if (imgDataIndex < imgDataArray.length) {
@@ -223,6 +247,23 @@ window.comicStrip = (function($) {
 
 		resetImgState();
 	}
+	function scrollDown() {
+		if (imgDataIndex === 0) {
+			// already at the top
+			return;
+		}
+		imgDataIndex--;
+		scrollStrip(0);
+	}
+
+	function scrollUp() {
+		if (imgDataArray.length <= imgDataIndex + 1) {
+			// no more images
+			return;
+		}
+		imgDataIndex++;
+		scrollStrip(1);
+	}
 	
 	// --------------- init -----------------------
 	function onDeviceReady() {
@@ -251,25 +292,29 @@ window.comicStrip = (function($) {
 			onTouchEnd(e.pageX, e.pageY);
 		});
 		
-		// click
-		$(YOUNGER_DIV).bind('click', function(e) {
-			if (imgDataIndex === 0) {
-				// already at the top
-				return;
-			}
-			imgDataIndex--;
-			scrollStrip(0);
-			e.preventDefault();
+		// touch swipe
+		$(document).bind('touchstart', function(e){
+		    onBodyTouchStart(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY);
+		    e.preventDefault();
+		}).bind('touchmove', function(e){
+		    e.preventDefault();
+		}).bind('touchend', function(e){
+		    var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+		    onBodyTouchEnd(touch.clientX, touch.clientY);
+		    e.preventDefault();
 		});
-		$(OLDER_DIV).bind('click', function(e) {
-			if (imgDataArray.length <= imgDataIndex + 1) {
-				// no more images
-				return;
-			}
-			imgDataIndex++;
-			scrollStrip(1);
-			e.preventDefault();
+		
+
+		//click
+		$(YOUNGER_DIV).bind('click', function(e){
+		    scrollDown();
+		    e.preventDefault();
 		});
+		$(OLDER_DIV).bind('click', function(e){
+		    scrollUp();
+		    e.preventDefault();
+		});
+		
 		$("#menuButton").bind('click', function(e) {
 			options.val(providerIndex);
 			$("#menu").removeClass('hide');
