@@ -267,6 +267,9 @@ window.comicStrip = (function($) {
 	
 	// --------------- init -----------------------
 	function onDeviceReady() {
+		if (window.StatusBar) {
+			StatusBar.overlaysWebView(false);
+		}
 		screenWidth = $(CURRENT_DIV).width();
 		screenHeight = $(window).height();
 		providerIndex = localStorage.getItem('providerIndex');
