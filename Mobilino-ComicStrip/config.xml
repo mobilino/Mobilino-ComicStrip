@@ -69,7 +69,7 @@ Christof Lange
 <access origin="*" />
 
 <gap:plugin name="cordova-plugin-statusbar" source="npm"/>
-<preference name="StatusBarOverlaysWebView" value="true" />
+<preference name="StatusBarOverlaysWebView" value="false" />
 
 <preference name="orientation" value="portrait" />
 
