@@ -116,8 +116,8 @@ window.comicStrip = (function($) {
 			imgDataArray[imgIndex].width = img.width();
 			imgDataArray[imgIndex].height = img.height();
 			img.animate({
-				opacity : (target === CURRENT_DIV ? '0.5' : '0.2')
-			}, 290);
+				opacity : (target === CURRENT_DIV ? '1' : '0.5')
+			}, 100);
 			if (target === CURRENT_DIV && currentAppStatus !== STATUS_MENU) {
 				currentAppStatus = STATUS_DISPLAY_STRIP;
 			}
@@ -276,8 +276,10 @@ window.comicStrip = (function($) {
 	}
 	
 	function showMenu() {
-		var options = $("#provider");
-		options.val(providerIndex);
+		if (providerIndex != null) {
+			var options = $("#provider");
+			options.val(providerIndex);
+		}
 		$("#menu").removeClass('hide');
 		currentAppStatus = STATUS_MENU;
 	}
