@@ -103,8 +103,8 @@ body {
 	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
+	border-top: 20px solid lightgrey;
+	border-bottom: 20px solid lightgrey;
 }
 #menu>select {
 	background: white;
@@ -112,6 +112,7 @@ body {
 	padding: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
+	-webkit-appearance: initial;
 }
 #menu>button {
 	background: lightgreen;

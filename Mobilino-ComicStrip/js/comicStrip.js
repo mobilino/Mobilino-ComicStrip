@@ -78,7 +78,7 @@ window.comicStrip = (function($) {
     }
 
     function onBodyTouchEnd(x, y) {
-		if (bodyTouchStartY !== 0) {
+		if (bodyTouchStartY !== 0 && currentAppStatus !== STATUS_TRANSITION) {
 		  var distanceX = bodyTouchStartX - x;
 		  var distanceY = bodyTouchStartY - y;
 		  if (Math.abs(distanceY) > Math.abs(distanceX) && Math.abs(distanceY) > 60) {
@@ -313,7 +313,7 @@ window.comicStrip = (function($) {
 		});
 		
 		function isBodyTouchAllowed(x, y) {
-			if (currentAppStatus === STATUS_DISPLAY_STRIP && (x > 50 || y > 50)) {
+			if ((currentAppStatus === STATUS_DISPLAY_STRIP || currentAppStatus === STATUS_TRANSITION) && (x > 50 || y > 50)) {
 				return true;
 			} 
 			return false;
@@ -363,6 +363,7 @@ window.comicStrip = (function($) {
 				} else {
 					currentAppStatus = STATUS_DISPLAY_STRIP;
 				}
+				window.scrollTo(0, 0);
 			}
 		});
 		
