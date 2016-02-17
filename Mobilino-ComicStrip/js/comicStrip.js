@@ -18,6 +18,11 @@ window.comicStrip = (function($) {
 	var providerArray = [{name: 'Dilbert', url: 'http://dilbert.com', stripSelector: '.img-comic', descAttrParent: 'href', moreSelector: '.js_load_comics'},
 	                     {name: 'xkcd', url: 'http://xkcd.com', stripSelector: '#comic img', descAttr: 'alt', moreSelector: "a[rel='prev']"}];
 	var providerIndex = null;
+	var STATUS_LOADING = "loading";
+	var STATUS_DISPLAY_STRIP = "strip";
+	var STATUS_TRANSITION = "transitionToNextStrip";
+	var STATUS_MENU = "menu";
+	var currentAppStatus = STATUS_LOADING;
 
 	// --------------- scroll in current strip -----------------------
 	function onTouchStart(x, y) {
@@ -70,9 +75,9 @@ window.comicStrip = (function($) {
 	function onBodyTouchStart(x, y) {
 		bodyTouchStartX = x;
 		bodyTouchStartY = y;
-	    }
+    }
 
-	    function onBodyTouchEnd(x, y) {
+    function onBodyTouchEnd(x, y) {
 		if (bodyTouchStartY !== 0) {
 		  var distanceX = bodyTouchStartX - x;
 		  var distanceY = bodyTouchStartY - y;
@@ -113,6 +118,9 @@ window.comicStrip = (function($) {
 			img.animate({
 				opacity : (target === CURRENT_DIV ? '1' : '0.5')
 			}, 290);
+			if (target === CURRENT_DIV && currentAppStatus !== STATUS_MENU) {
+				currentAppStatus = STATUS_DISPLAY_STRIP;
+			}
 		});
 	}
 
@@ -183,6 +191,7 @@ window.comicStrip = (function($) {
 	
 	// --------------- slide to next strip -----------------------
 	function scrollStrip(direction) { // 1 = up, 0 = down
+		currentAppStatus = STATUS_TRANSITION;
 		var divToBeRemoved = (direction ? YOUNGER_DIV : OLDER_DIV);
 		var divToCenterted = (direction ? OLDER_DIV : YOUNGER_DIV);
 		// animations regadless of scroll direction
@@ -243,12 +252,13 @@ window.comicStrip = (function($) {
 			} else if (direction === 0 && imgDataIndex > 0) {
 				loadImg(YOUNGER_DIV, imgDataIndex - 1);
 			}
+			currentAppStatus = STATUS_DISPLAY_STRIP;
 		});
 
 		resetImgState();
 	}
 	function scrollDown() {
-		if (imgDataIndex === 0) {
+		if (imgDataIndex === 0 || currentAppStatus === STATUS_TRANSITION) {
 			// already at the top
 			return;
 		}
@@ -257,7 +267,7 @@ window.comicStrip = (function($) {
 	}
 
 	function scrollUp() {
-		if (imgDataArray.length <= imgDataIndex + 1) {
+		if (imgDataArray.length <= imgDataIndex + 1 || currentAppStatus === STATUS_TRANSITION) {
 			// no more images
 			return;
 		}
@@ -265,6 +275,12 @@ window.comicStrip = (function($) {
 		scrollStrip(1);
 	}
 	
+	function showMenu() {
+		var options = $("#provider");
+		options.val(providerIndex);
+		$("#menu").removeClass('hide');
+		currentAppStatus = STATUS_MENU;
+	}
 	// --------------- init -----------------------
 	function onDeviceReady() {
 		if (window.StatusBar) {
@@ -296,16 +312,29 @@ window.comicStrip = (function($) {
 			onTouchEnd(e.pageX, e.pageY);
 		});
 		
+		function isBodyTouchAllowed(x, y) {
+			if (currentAppStatus === STATUS_DISPLAY_STRIP && (x > 50 || y > 50)) {
+				return true;
+			} 
+			return false;
+		}
+		
 		// touch swipe
 		$(document).bind('touchstart', function(e){
-		    onBodyTouchStart(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY);
-		    e.preventDefault();
+		    if (isBodyTouchAllowed(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY)) {
+				onBodyTouchStart(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY);
+			    e.preventDefault();
+		    }
 		}).bind('touchmove', function(e){
-		    e.preventDefault();
+			if (isBodyTouchAllowed(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY)) {
+				e.preventDefault();
+			}
 		}).bind('touchend', function(e){
-		    var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		    onBodyTouchEnd(touch.clientX, touch.clientY);
-		    e.preventDefault();
+			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+			if (isBodyTouchAllowed(touch.clientX, touch.clientY)) {
+			    onBodyTouchEnd(touch.clientX, touch.clientY);
+			    e.preventDefault();
+			}
 		});
 		
 
@@ -320,17 +349,19 @@ window.comicStrip = (function($) {
 		});
 		
 		$("#menuButton").bind('click', function(e) {
-			options.val(providerIndex);
-			$("#menu").removeClass('hide');
+			showMenu();
 		});
 		$("#menuOk").bind('click', function(e) {
 			var newProviderIndex = $("#provider").val();
 			if (newProviderIndex != -1) {
 				$("#menu").addClass('hide');
 				if (newProviderIndex != providerIndex) {
+					currentAppStatus = STATUS_LOADING;
 					providerIndex = newProviderIndex;
 					localStorage.setItem('providerIndex', providerIndex);
 					loadStripsInitially();
+				} else {
+					currentAppStatus = STATUS_DISPLAY_STRIP;
 				}
 			}
 		});
@@ -343,7 +374,7 @@ window.comicStrip = (function($) {
 		
 		//load strips
 		if (providerIndex == null) {
-			$("#menu").removeClass('hide');
+			showMenu();
 		} else {
 			loadStripsInitially();
 		}
