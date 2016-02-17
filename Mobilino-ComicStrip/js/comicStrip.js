@@ -116,7 +116,7 @@ window.comicStrip = (function($) {
 			imgDataArray[imgIndex].width = img.width();
 			imgDataArray[imgIndex].height = img.height();
 			img.animate({
-				opacity : (target === CURRENT_DIV ? '1' : '0.5')
+				opacity : (target === CURRENT_DIV ? '0.5' : '0.2')
 			}, 290);
 			if (target === CURRENT_DIV && currentAppStatus !== STATUS_MENU) {
 				currentAppStatus = STATUS_DISPLAY_STRIP;
