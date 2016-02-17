@@ -181,6 +181,7 @@ window.comicStrip = (function($) {
 	}
 
 	function loadStripsInitially() {
+		$("#currentDesc").html("loading...");
 		imgDataArray = [];
 		imgDataIndex = 0;
 		$(YOUNGER_DIV).empty();
@@ -219,7 +220,7 @@ window.comicStrip = (function($) {
 		// focus new
 		$(divToCenterted + " img").animate({
 			opacity : "1"
-		}, 290);
+		}, 200);
 		// if (direction === 0) {
 		// $(divToCenterted).css('top', -$(divToCenterted).height() +
 		// (screenHeight / 10) + "px");
@@ -260,6 +261,7 @@ window.comicStrip = (function($) {
 	function scrollDown() {
 		if (imgDataIndex === 0 || currentAppStatus === STATUS_TRANSITION) {
 			// already at the top
+			loadStripsInitially(); //reload
 			return;
 		}
 		imgDataIndex--;
